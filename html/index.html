@@ -118,7 +118,9 @@
       <section class="scroll-reveal py-6 group">
         <div class="flex justify-center"><div class="font-caramel text-xl leading-4 font-normal text-thema-04-point mb-2 italic">Gallery</div></div>
         <h2 class="font-serif text-xl text-[#333] text-center mb-8">사진 갤러리</h2>
-        <div id="thumb-strip" class="flex gap-2 mb-4 px-4 overflow-x-auto overflow-y-hidden scroll-smooth min-w-0" style="-webkit-overflow-scrolling: touch;"></div>
+        <div id="thumb-strip-wrap" class="mb-4 -mx-4 overflow-x-auto overflow-y-hidden scroll-smooth" style="-webkit-overflow-scrolling: touch; touch-action: pan-x;">
+          <div id="thumb-strip" class="flex gap-2 px-4 w-max min-w-full"></div>
+        </div>
         <div class="relative w-full flex justify-center bg-gray-100 cursor-pointer" id="gallery-main" onclick="openLightbox()">
           <div class="relative w-full aspect-[3/4] overflow-hidden">
             <img id="main-img" src="image/100_0055_(2).jpg" alt="갤러리 사진 1" class="absolute inset-0 w-full h-full object-cover" loading="lazy" decoding="async">
@@ -154,7 +156,7 @@
           </div>
           <div class="overflow-hidden w-[100vw] max-w-[360px] relative left-1/2 -translate-x-1/2">
             <div class="w-full aspect-[4/3] max-h-[220px] relative border-y border-gray-200">
-              <div id="kakao-map" class="absolute inset-0 w-full h-full" style="min-height:180px"></div>
+g              <div id="kakao-map" class="absolute inset-0 w-full h-full" style="min-height:180px"></div>
             </div>
           </div>
           <div class="flex gap-3">
@@ -377,6 +379,7 @@
       const btn = document.createElement('button');
       btn.type = 'button';
       btn.className = 'flex-shrink-0 w-14 h-[56px] rounded overflow-hidden border-2 ' + (i===0 ? 'border-[var(--color-thema-04-point)] ring-2 ring-[var(--color-thema-04-point)]/30' : 'border-transparent opacity-70');
+      btn.style.touchAction = 'pan-x';
       btn.onclick = (e) => { e.stopPropagation(); goToIndex(i); };
       const t = thumbSrc(src);
       const fp = i < 8 ? ' fetchpriority="high"' : ' fetchpriority="low"';
@@ -607,11 +610,11 @@
       var container = document.getElementById('kakao-map');
       if (!container || typeof kakao === 'undefined') return;
       var options = {
-        center: new kakao.maps.LatLng(35.157258, 129.059728),
+        center: new kakao.maps.LatLng(35.1497327738588, 129.059753113622),
         level: 2
       };
       var map = new kakao.maps.Map(container, options);
-      var markerPosition = new kakao.maps.LatLng(35.157258, 129.059728);
+      var markerPosition = new kakao.maps.LatLng(35.1497327738588, 129.059753113622);
       var marker = new kakao.maps.Marker({ position: markerPosition });
       marker.setMap(map);
     })();

@@ -165,16 +165,21 @@ export default function PhotoGallery() {
 
       {/* 상단 전체 리스트 (가로 스크롤) - 선택 주변만 실제 이미지 로드 */}
       <div
-        ref={stripRef}
-        className="flex gap-2 mb-4 px-4 overflow-x-auto overflow-y-hidden scroll-smooth min-w-0"
-        style={{ scrollbarWidth: "thin", WebkitOverflowScrolling: "touch" }}
+        className="mb-4 -mx-4 overflow-x-auto overflow-y-hidden scroll-smooth"
+        style={{
+          scrollbarWidth: "thin",
+          WebkitOverflowScrolling: "touch",
+          touchAction: "pan-x",
+        }}
       >
+        <div ref={stripRef} className="flex gap-2 px-4 w-max min-w-full">
         {GALLERY_IMAGES.map((_, idx) => (
           <button
             key={idx}
             ref={(el) => { thumbRefs.current[idx] = el; }}
             type="button"
             onClick={(e) => { e.stopPropagation(); goToIndex(idx); }}
+            style={{ touchAction: "pan-x" }}
             className={`relative w-14 h-[56px] flex-shrink-0 rounded overflow-hidden border-2 transition-all ${
               idx === currentIndex
                 ? "border-thema-04-point ring-2 ring-thema-04-point/30"
@@ -197,6 +202,7 @@ export default function PhotoGallery() {
             )}
           </button>
         ))}
+        </div>
       </div>
 
       <div

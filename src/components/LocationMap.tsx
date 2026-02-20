@@ -11,7 +11,7 @@ const NAVER_MAP_URL =
 const VENUE_NAME = "라온웨딩홀 23층";
 const PHONE = "051-631-2121";
 const ADDRESS = "부산광역시 부산진구 중앙대로 640";
-const MAP_CENTER = { lat: 35.157258, lng: 129.059728 };
+const MAP_CENTER = { lat: 35.1497327738588, lng: 129.059753113622 };
 
 declare global {
   interface Window {
