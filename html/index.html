@@ -53,9 +53,9 @@
       </div>
     </section>
 
-    <div class="px-6 pb-20 space-y-20">
+    <div class="px-6 pb-12 space-y-6">
       <!-- 예식 정보 -->
-      <section class="scroll-reveal py-8">
+      <section class="scroll-reveal py-6">
         <div class="text-center space-y-6">
           <div class="flex justify-center">
             <svg xmlns="http://www.w3.org/2000/svg" width="126" height="16" fill="none"><g fill="currentColor" clip-path="url(#clip)"><path d="M63.5 5.444c-.797-1.65-2.363-2.59-3.773-2.19-1.641.47-2.48 2.585-1.869 4.715.069.241.159.482.284.76.157.348 1.633 3.48 5.199 6.312l.159.125.158-.125c3.566-2.83 5.042-5.962 5.22-6.356q.162-.356.263-.716c.611-2.13-.227-4.244-1.87-4.712-1.412-.401-2.975.539-3.771 2.19z"/></g><defs><clipPath id="clip"><path fill="#fff" d="M.5 0h126v16H.5z"/></clipPath></defs></svg>
@@ -77,7 +77,7 @@
       </section>
 
       <!-- Wedding day / 카운트다운 -->
-      <section class="scroll-reveal -mx-6 py-8 px-6 bg-[#f5f5f5]">
+      <section class="scroll-reveal -mx-6 py-6 px-6 bg-[#f5f5f5]">
         <div class="text-center space-y-6">
           <h2 class="font-caramel text-xl leading-4 font-normal text-thema-04-point mb-2 italic">Wedding day</h2>
           <p class="font-gowun text-[#333] text-base">2026년 05월 16일</p>
@@ -105,7 +105,7 @@
       </section>
 
       <!-- 사진 갤러리 -->
-      <section class="scroll-reveal py-8 group">
+      <section class="scroll-reveal py-6 group">
         <div class="flex justify-center"><div class="font-caramel text-xl leading-4 font-normal text-thema-04-point mb-2 italic">Gallery</div></div>
         <h2 class="font-serif text-xl text-[#333] text-center mb-8">사진 갤러리</h2>
         <div id="thumb-strip" class="flex gap-2 mb-4 px-4 overflow-x-auto scroll-smooth"></div>
@@ -120,7 +120,7 @@
       </section>
 
       <!-- 오시는 길 -->
-      <section class="scroll-reveal py-8">
+      <section class="scroll-reveal -mx-6 py-6 px-6 bg-[#f5f5f5]">
         <h2 class="font-serif text-xl text-[#333] text-center mb-8">오시는 길</h2>
         <div class="space-y-4">
           <div class="bg-gray-50 rounded-xl p-6 text-center space-y-1">
@@ -154,24 +154,18 @@
         </div>
       </section>
 
-      <!-- Infomation / 공지사항 / 식사안내 -->
-      <section class="scroll-reveal py-8 -mx-6 px-6 bg-[#f5f5f5]">
-        <div class="bg-white rounded-2xl p-6 shadow-sm">
-          <div class="text-center space-y-2 mb-6">
-            <p class="font-caramel font-serif text-lg italic text-[#666]">Infomation</p>
-            <h2 class="font-semibold text-[#333]">안내문</h2>
-            <div class="mx-auto w-16 h-px bg-gray-300"></div>
-          </div>
-          <div class="text-center space-y-4">
-            <!-- <div class="space-y-1">
-              <div class="flex items-center justify-center gap-3">
-                <span class="w-8 h-px bg-gray-300"></span>
-                <h3 class="font-bold text-[#333]">안내문</h3>
-                <span class="w-8 h-px bg-gray-300"></span>
-              </div>
-            </div> -->
-          
-            <div class="space-y-2 text-[#333] text-sm leading-relaxed">
+      <!-- 동영상 배경 + 안내문 -->
+      <section class="scroll-reveal relative overflow-hidden -mx-6 -my-6 aspect-[9/16] min-h-[500px]" style="margin-top: 0;margin-bottom: -21px;">
+        <video autoplay muted loop playsinline class="absolute inset-0 w-full h-full object-cover">
+          <source src="image/0220.mp4" type="video/mp4">
+        </video>
+        <div class="absolute inset-0 bg-black/25"></div>
+        <div class="absolute bottom-0 left-0 right-0 flex flex-col items-center justify-end pb-10 px-6 z-10">
+          <div class="text-center space-y-3">
+            <p class="font-caramel font-serif text-lg italic text-white/95">Infomation</p>
+            <h2 class="font-semibold text-white text-xl">안내문</h2>
+            <div class="mx-auto w-16 h-px bg-white/70"></div>
+            <div class="space-y-1 text-white text-sm leading-relaxed drop-shadow">
               <p>신랑·신부를 위한 흰색만 살짝 피해주시고,</p>
               <p>밝고 화려한 의상을 환영합니다</p>
               <p>축하의 날을 환하게 빛내주세요</p>
@@ -181,7 +175,7 @@
       </section>
 
       <!-- 마음 전하실 곳 / 계좌 -->
-      <section class="scroll-reveal py-8">
+      <section class="scroll-reveal -mx-6 py-6 px-6 bg-[#f5f5f5]">
         <div class="text-center space-y-3 mb-6">
           <p class="font-caramel font-serif text-lg italic text-[#888]">Account</p>
           <h2 class="font-semibold text-[#333] text-lg">마음 전하실 곳</h2>
