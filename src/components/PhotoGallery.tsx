@@ -50,6 +50,7 @@ function Lightbox({ src, alt, onClose, onPrev, onNext, hasPrev, hasNext }: { src
   );
 }
 
+// 원본 이미지 경로 (라이트박스에서만 사용)
 const GALLERY_IMAGES = [
   "/image/100_0055_(2).jpg",
   "/image/100_0167_(2).jpg",
@@ -98,6 +99,11 @@ const GALLERY_IMAGES = [
   "/image/_DSC0770.JPG",
   "/image/_DSC0797.JPG",
 ];
+
+// 썸네일/메인 표시용 webp 경로 (라이트박스 제외)
+function toThumbPath(original: string): string {
+  return original.replace(/^\/?image\//, "/image/thumb/").replace(/\.[^.]+$/i, ".webp");
+}
 
 export default function PhotoGallery() {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -244,7 +250,7 @@ export default function PhotoGallery() {
           >
             {isInWindow(idx) ? (
               <Image
-                src={GALLERY_IMAGES[idx]}
+                src={toThumbPath(GALLERY_IMAGES[idx])}
                 alt={`미리보기 ${idx + 1}`}
                 fill
                 className="object-cover select-none pointer-events-none"
@@ -269,9 +275,9 @@ export default function PhotoGallery() {
         onClick={() => setLightboxOpen(true)}
       >
         <div className="relative w-full aspect-[3/4] overflow-hidden">
-          {/* 현재 이미지 */}
+          {/* 현재 이미지 (썸네일과 동일한 webp) */}
           <Image
-            src={GALLERY_IMAGES[currentIndex]}
+            src={toThumbPath(GALLERY_IMAGES[currentIndex])}
             alt={`갤러리 사진 ${currentIndex + 1}`}
             fill
             className={`object-cover transition-opacity duration-200 ${isLoaded ? "opacity-100" : "opacity-0"}`}
@@ -282,8 +288,8 @@ export default function PhotoGallery() {
           />
           {/* 다음/이전 이미지 미리 로드 (캐시 적재 → 전환 시 즉시 표시) */}
           <div className="absolute inset-0 opacity-0 pointer-events-none" aria-hidden>
-            <Image key={`pre-${nextIdx}`} src={GALLERY_IMAGES[nextIdx]} alt="" fill className="object-cover" sizes="360px" />
-            <Image key={`pre-${prevIdx}`} src={GALLERY_IMAGES[prevIdx]} alt="" fill className="object-cover" sizes="360px" />
+            <Image key={`pre-${nextIdx}`} src={toThumbPath(GALLERY_IMAGES[nextIdx])} alt="" fill className="object-cover" sizes="360px" />
+            <Image key={`pre-${prevIdx}`} src={toThumbPath(GALLERY_IMAGES[prevIdx])} alt="" fill className="object-cover" sizes="360px" />
           </div>
         </div>
         <button
