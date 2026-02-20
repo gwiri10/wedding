@@ -37,17 +37,18 @@
     .guest-card-name { font-weight: 600; color: #333; font-size: 0.875rem; }
     .guest-card-date { color: #999; font-size: 0.75rem; flex-shrink: 0; }
     .guest-card-message { color: #555; font-size: 0.875rem; line-height: 1.6; white-space: pre-wrap; }
+    .guest-card-hidden { display: none; }
     .rsvp-btn-group { display: flex; gap: 0.5rem; }
     .rsvp-btn { flex: 1; padding: 0.5rem 0.75rem; border-radius: 0.5rem; border: 1px solid #ddd; background: white; font-size: 0.875rem; cursor: pointer; transition: all 0.2s; }
     .rsvp-btn.selected { border-color: var(--color-thema-04-point); background: #f9f7fa; color: var(--color-thema-04-point); }
   </style>
 </head>
-<body class="bg-white antialiased">
+<body class="bg-[#eee] antialiased">
   <audio id="bgm" loop preload="auto">
     <source src="sound/행진곡_도경수) 'Popcorn' 편집본 .mp3" type="audio/mpeg">
   </audio>
   <button type="button" id="bgm-toggle" class="fixed bottom-20 right-6 z-40 w-10 h-10 rounded-full bg-white/90 shadow-lg flex items-center justify-center text-[#555] text-lg" title="배경음악 재생/일시정지">♫</button>
-  <main class="w-full max-w-[360px] mx-auto min-h-screen overflow-x-hidden bg-white">
+  <main class="w-full max-w-[360px] mx-auto min-h-screen overflow-x-hidden bg-white rounded-t-[28px] rounded-b-[28px] shadow-sm mb-16">
     <!-- 히어로 -->
     <section class="relative w-full h-[100dvh] min-h-[600px] max-h-[800px] overflow-hidden">
       <img src="image/200_8363_(2).jpg" alt="결혼식 메인" class="absolute inset-0 w-full h-full object-cover object-center" loading="eager" fetchpriority="high">
@@ -261,10 +262,13 @@
         <div id="guestList" class="space-y-3">
           <!-- 방명록 카드가 여기에 표시됩니다 -->
         </div>
+        <div id="guestListMore" class="mt-3 text-center hidden">
+          <button type="button" id="guestViewAll" class="text-[#555] text-sm py-2 px-4 rounded-lg border border-gray-200 hover:bg-gray-50">+전체보기</button>
+        </div>
       </section>
 
       <!-- 참석 여부 (맨 아래) -->
-      <section class="scroll-reveal -mx-6 py-8 px-6 bg-[#f5f5f5]">
+      <section class="scroll-reveal -mx-6 py-8 px-6">
         <div class="text-center space-y-4 mb-6">
           <p class="font-caramel text-[#999] italic">RSVP</p>
           <h3 class="font-semibold text-[#333] text-lg">참석 여부 전달</h3>
@@ -272,6 +276,8 @@
         </div>
         <button type="button" id="rsvp-open" class="w-full py-4 rounded-xl bg-[#555] text-white font-medium text-sm shadow-md hover:bg-[#444]">참석여부 전달하기</button>
       </section>
+
+      <p class="text-center text-[#999] text-[10px] py-6">Copyright 2025. gwiri All rights reserved.</p>
     </div>
   </main>
 
@@ -469,17 +475,20 @@
         const raw = await res.json();
         const data = Array.isArray(raw) ? raw : (raw.data || raw.rows || []);
         const list = document.getElementById("guestList");
+        const moreWrap = document.getElementById("guestListMore");
         list.innerHTML = "";
+        moreWrap.classList.add("hidden");
         if (!Array.isArray(data) || data.length === 0) {
           list.innerHTML = '<p class="text-center text-[#999] text-sm py-8">아직 남겨주신 메시지가 없습니다.</p>';
           return;
         }
-        data.reverse().forEach(item => {
+        const reversed = data.reverse();
+        reversed.forEach((item, i) => {
           const d = item.date || item.Date || item[2];
           const date = d ? new Date(d) : new Date();
           const formattedDate = isNaN(date.getTime()) ? (d || "-") : date.toLocaleDateString("ko-KR");
           const card = document.createElement("div");
-          card.className = "guest-card";
+          card.className = "guest-card" + (i >= 3 ? " guest-card-hidden" : "");
           card.innerHTML = `
             <div class="guest-card-header">
               <span class="guest-card-name">${escapeHtml(item.name)}</span>
@@ -489,6 +498,9 @@
           `;
           list.appendChild(card);
         });
+        if (reversed.length > 3) {
+          moreWrap.classList.remove("hidden");
+        }
       } catch (e) {
         document.getElementById("guestList").innerHTML = '<p class="text-center text-[#999] text-sm py-8">방명록을 불러올 수 없습니다. Apps Script URL을 확인해 주세요.</p>';
       }
@@ -523,6 +535,10 @@
       }
     });
     loadGuests();
+    document.getElementById("guestViewAll").addEventListener("click", function() {
+      document.querySelectorAll(".guest-card-hidden").forEach(el => el.classList.remove("guest-card-hidden"));
+      document.getElementById("guestListMore").classList.add("hidden");
+    });
 
     // 참석 여부 (RSVP)
     const rsvpData = { side: "", attend: "", meal: "" };
