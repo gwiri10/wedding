@@ -30,14 +30,15 @@
     .font-caramel { font-family: 'Caramel', cursive; }
     .font-serif { font-family: 'Playfair Display', Georgia, serif; }
     .text-thema-04-point { color: var(--color-thema-04-point); }
+    .scroll-reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.6s ease, transform 0.6s ease; }
+    .scroll-reveal.visible { opacity: 1; transform: translateY(0); }
   </style>
 </head>
 <body class="bg-white antialiased">
-  <!-- 인트로 오버레이 -->
-  <div id="intro-overlay" class="fixed inset-0 z-50 flex items-center justify-center bg-white">
-    <p id="intro-text" class="font-serif text-2xl tracking-wide" style="color:#E3C9A8"><span id="intro-typed"></span><span id="intro-cursor" class="inline-block w-[2px] h-6 ml-0.5 align-middle bg-[#E3C9A8] animate-pulse" style="display:none;"></span></p>
-  </div>
-
+  <audio id="bgm" loop preload="auto">
+    <source src="sound/행진곡_도경수) 'Popcorn' 편집본 .mp3" type="audio/mpeg">
+  </audio>
+  <button type="button" id="bgm-toggle" class="fixed bottom-20 right-6 z-40 w-10 h-10 rounded-full bg-white/90 shadow-lg flex items-center justify-center text-[#555] text-lg" title="배경음악 재생/일시정지">♫</button>
   <main class="w-full max-w-[360px] mx-auto min-h-screen overflow-x-hidden bg-white">
     <!-- 히어로 -->
     <section class="relative w-full h-[100dvh] min-h-[600px] max-h-[800px] overflow-hidden">
@@ -54,18 +55,17 @@
 
     <div class="px-6 pb-20 space-y-20">
       <!-- 예식 정보 -->
-      <section class="py-8">
-        <h2 class="sr-only">예식 정보</h2>
+      <section class="scroll-reveal py-8">
         <div class="text-center space-y-6">
           <div class="flex justify-center">
             <svg xmlns="http://www.w3.org/2000/svg" width="126" height="16" fill="none"><g fill="currentColor" clip-path="url(#clip)"><path d="M63.5 5.444c-.797-1.65-2.363-2.59-3.773-2.19-1.641.47-2.48 2.585-1.869 4.715.069.241.159.482.284.76.157.348 1.633 3.48 5.199 6.312l.159.125.158-.125c3.566-2.83 5.042-5.962 5.22-6.356q.162-.356.263-.716c.611-2.13-.227-4.244-1.87-4.712-1.412-.401-2.975.539-3.771 2.19z"/></g><defs><clipPath id="clip"><path fill="#fff" d="M.5 0h126v16H.5z"/></clipPath></defs></svg>
           </div>
           <div class="font-caramel text-xl leading-4 font-normal text-thema-04-point mb-2 italic">Invitation</div>
-          <p class="text-xs text-[#555]">
+          <p class="text-sm text-[#555]">
             "너는 나에게 세상에서 단 하나뿐인 존재가 될 거야<br>나도 너에게 세상에서 단 하나뿐인 존재가 되겠지"<br>– 생텍쥐페리 〈어린왕자〉 중
           </p>
-          <p class="text-[#555] text-sm leading-loose">
-            우주선에서 처음 만난 우리,<br>세상에서 제일 귀여운 할머니 할아버지가 될 때까지<br>웃으며 사랑하며 살겠습니다<br><br>따뜻한 봄날, 저희의 시작을 함께해 주셔서 감사합니다
+          <p class="text-[#555] text-base leading-loose">
+            우주선에서 처음 만난 우리,<br>세상에서 제일 귀여운 할머니 할아버지가 <br>될 때까지 웃으며 사랑하며 살겠습니다<br><br>따뜻한 봄날, <br>저희의 시작을 함께해 주셔서 감사합니다
           </p>
           <div class="flex items-center justify-center gap-4 text-base">
             <span>이재근 • 손영자</span><span class="text-sm">차남</span><span>이승준</span>
@@ -77,18 +77,19 @@
       </section>
 
       <!-- Wedding day / 카운트다운 -->
-      <section class="py-8 bg-[#f5f5f5]">
+      <section class="scroll-reveal -mx-6 py-8 px-6 bg-[#f5f5f5]">
         <div class="text-center space-y-6">
           <h2 class="font-caramel text-xl leading-4 font-normal text-thema-04-point mb-2 italic">Wedding day</h2>
-          <p class="font-gowun text-[#333] text-sm">2026년 05월 16일</p>
-          <p class="font-gowun text-[#333] text-sm">토요일 오후 4시</p>
+          <p class="font-gowun text-[#333] text-base">2026년 05월 16일</p>
+          <p class="font-gowun text-[#333] text-base">토요일 오후 4시</p>
           <div class="grid grid-cols-7 gap-1 text-center text-xs font-gowun max-w-[280px] mx-auto">
             <div class="py-1 text-red-500">일</div><div class="py-1 text-[#333]">월</div><div class="py-1 text-[#333]">화</div><div class="py-1 text-[#333]">수</div><div class="py-1 text-[#333]">목</div><div class="py-1 text-[#333]">금</div><div class="py-1 text-[#333]">토</div>
-            <div class="py-1.5 text-[#999]"></div><div class="py-1.5 text-[#999]"></div><div class="py-1.5 text-[#999]"></div><div class="py-1.5 text-[#999]"></div><div class="py-1.5 text-[#333]">1</div><div class="py-1.5 text-[#333]">2</div><div class="py-1.5 text-red-500">3</div>
-            <div class="py-1.5 text-[#333]">4</div><div class="py-1.5 text-[#333]">5</div><div class="py-1.5 text-[#333]">6</div><div class="py-1.5 text-[#333]">7</div><div class="py-1.5 text-red-500">8</div><div class="py-1.5 text-[#333]">9</div><div class="py-1.5 text-[#333]">10</div>
-            <div class="py-1.5 text-[#333]">11</div><div class="py-1.5 text-[#333]">12</div><div class="py-1.5 text-[#333]">13</div><div class="py-1.5 text-[#333]">14</div><div class="py-1.5 text-red-500">15</div><div class="py-1.5 bg-[#555] text-white rounded-full w-7 h-7 mx-auto flex items-center justify-center">16</div><div class="py-1.5 text-[#333]">17</div>
-            <div class="py-1.5 text-red-500">18</div><div class="py-1.5 text-[#333]">19</div><div class="py-1.5 text-[#333]">20</div><div class="py-1.5 text-[#333]">21</div><div class="py-1.5 text-red-500">22</div><div class="py-1.5 text-[#333]">23</div><div class="py-1.5 text-[#333]">24</div>
-            <div class="py-1.5 text-red-500">25</div><div class="py-1.5 text-[#333]">26</div><div class="py-1.5 text-[#333]">27</div><div class="py-1.5 text-[#333]">28</div><div class="py-1.5 text-red-500">29</div><div class="py-1.5 text-[#333]">30</div><div class="py-1.5 text-[#333]">31</div>
+            <div class="py-1.5 text-[#999]"></div><div class="py-1.5 text-[#999]"></div><div class="py-1.5 text-[#999]"></div><div class="py-1.5 text-[#999]"></div><div class="py-1.5 text-[#999]"></div><div class="py-1.5 text-[#333]">1</div><div class="py-1.5 text-red-500">2</div>
+            <div class="py-1.5 text-[#333]">3</div><div class="py-1.5 text-[#333]">4</div><div class="py-1.5 text-[#333]">5</div><div class="py-1.5 text-[#333]">6</div><div class="py-1.5 text-[#333]">7</div><div class="py-1.5 text-red-500">8</div><div class="py-1.5 text-[#333]">9</div>
+            <div class="py-1.5 text-[#333]">10</div><div class="py-1.5 text-[#333]">11</div><div class="py-1.5 text-[#333]">12</div><div class="py-1.5 text-[#333]">13</div><div class="py-1.5 text-[#333]">14</div><div class="py-1.5 text-red-500">15</div><div class="py-1.5 bg-[#555] text-white rounded-full w-7 h-7 mx-auto flex items-center justify-center">16</div>
+            <div class="py-1.5 text-[#333]">17</div><div class="py-1.5 text-red-500">18</div><div class="py-1.5 text-[#333]">19</div><div class="py-1.5 text-[#333]">20</div><div class="py-1.5 text-[#333]">21</div><div class="py-1.5 text-red-500">22</div><div class="py-1.5 text-[#333]">23</div>
+            <div class="py-1.5 text-[#333]">24</div><div class="py-1.5 text-red-500">25</div><div class="py-1.5 text-[#333]">26</div><div class="py-1.5 text-[#333]">27</div><div class="py-1.5 text-[#333]">28</div><div class="py-1.5 text-red-500">29</div><div class="py-1.5 text-[#333]">30</div>
+            <div class="py-1.5 text-[#333]">31</div><div class="py-1.5 text-[#999]"></div><div class="py-1.5 text-[#999]"></div><div class="py-1.5 text-[#999]"></div><div class="py-1.5 text-[#999]"></div><div class="py-1.5 text-[#999]"></div><div class="py-1.5 text-[#999]"></div>
           </div>
           <div class="flex items-center justify-center gap-2 font-gowun">
             <div class="bg-white rounded-lg px-4 py-2 shadow-sm min-w-[60px]"><p id="cd-days" class="text-[#333] font-semibold text-lg">00</p><p class="text-[#999] text-xs">DAYS</p></div>
@@ -104,7 +105,7 @@
       </section>
 
       <!-- 사진 갤러리 -->
-      <section class="py-8 group">
+      <section class="scroll-reveal py-8 group">
         <div class="flex justify-center"><div class="font-caramel text-xl leading-4 font-normal text-thema-04-point mb-2 italic">Gallery</div></div>
         <h2 class="font-serif text-xl text-[#333] text-center mb-8">사진 갤러리</h2>
         <div id="thumb-strip" class="flex gap-2 mb-4 px-4 overflow-x-auto scroll-smooth"></div>
@@ -119,7 +120,7 @@
       </section>
 
       <!-- 오시는 길 -->
-      <section class="py-8">
+      <section class="scroll-reveal py-8">
         <h2 class="font-serif text-xl text-[#333] text-center mb-8">오시는 길</h2>
         <div class="space-y-4">
           <div class="bg-gray-50 rounded-xl p-6 text-center space-y-1">
@@ -127,21 +128,118 @@
             <p class="text-[#555] text-sm">부산광역시 부산진구 중앙대로 640</p>
             <a href="tel:0516312121" class="text-[#555] text-sm hover:text-thema-04-point">051-631-2121</a>
           </div>
+          <div class="mb-4 flex flex-col">
+            <div class="w-full">
+              <div class="flex items-center gap-2 text-[#555]">
+                <div class="flex items-center justify-center w-6 h-6 border border-[#555] rounded-sm">
+                  <span class="text-[#555] font-bold text-sm leading-none">P</span>
+                </div>
+                <span class="font-bold text-[#555]">주차</span>
+              </div>
+              <div class="mt-2 mb-4 h-px w-full bg-[#555]"></div>
+              <div class="flex flex-col gap-1 text-[#888] text-sm leading-relaxed">
+                <p>ABL생명 빌딩 지하 2층 ~ 지하 5층(3시간 무료주차)</p>
+              </div>
+            </div>
+          </div>
           <div class="overflow-hidden w-[100vw] max-w-[360px] relative left-1/2 -translate-x-1/2">
             <div class="w-full aspect-[4/3] max-h-[220px] relative border-y border-gray-200">
               <iframe src="https://www.openstreetmap.org/export/embed.html?bbox=129.041%2C35.142%2C129.071%2C35.172&layer=mapnik&marker=35.157%2C129.056" width="100%" height="100%" style="border:0" allowfullscreen loading="lazy" title="오시는 길 지도" class="absolute inset-0 w-full h-full"></iframe>
             </div>
           </div>
-          <a href="https://map.kakao.com/?q=%EB%B6%80%EC%82%B0%EA%B4%91%EC%97%AD%EC%8B%9C%20%EB%B6%80%EC%82%B0%EC%A7%84%EA%B5%AC%20%EC%A4%91%EC%95%99%EB%8C%80%EB%A1%9C%20640" target="_blank" rel="noopener noreferrer" class="flex items-center justify-center gap-2 w-full py-3 px-4 rounded-xl bg-[#FEE500] text-[#191919] font-medium text-sm shadow-md hover:shadow-lg">카카오맵에서 보기</a>
+          <div class="flex gap-3">
+            <a href="https://map.kakao.com/?q=%EB%B6%80%EC%82%B0%EA%B4%91%EC%97%AD%EC%8B%9C%20%EB%B6%80%EC%82%B0%EC%A7%84%EA%B5%AC%20%EC%A4%91%EC%95%99%EB%8C%80%EB%A1%9C%20640" target="_blank" rel="noopener noreferrer" class="flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-[#FEE500] text-[#191919] font-medium text-sm shadow-md hover:shadow-lg">카카오맵</a>
+            <a href="https://map.naver.com/v5/search/%EB%B6%80%EC%82%B0%EA%B4%91%EC%97%AD%EC%8B%9C%20%EB%B6%80%EC%82%B0%EC%A7%84%EA%B5%AC%20%EC%A4%91%EC%95%99%EB%8C%80%EB%A1%9C%20640" target="_blank" rel="noopener noreferrer" class="flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-[#03C75A] text-white font-medium text-sm shadow-md hover:shadow-lg">네이버맵</a>
+          </div>
         </div>
       </section>
 
-      <!-- 액션 버튼 -->
-      <section class="py-8">
-        <h2 class="sr-only">공유 및 계좌</h2>
-        <div class="flex flex-col gap-4">
-          <button onclick="copyAccount()" class="w-full py-4 px-6 rounded-2xl bg-[#E3C9A8] text-[#333] font-medium text-base shadow-md hover:shadow-lg active:scale-[0.98]">계좌번호 복사</button>
-          <button onclick="shareKakao()" class="w-full py-4 px-6 rounded-2xl bg-[#E3C9A8] text-[#333] font-medium text-base shadow-md hover:shadow-lg active:scale-[0.98]">카카오톡 공유</button>
+      <!-- Infomation / 공지사항 / 식사안내 -->
+      <section class="scroll-reveal py-8 -mx-6 px-6 bg-[#f5f5f5]">
+        <div class="bg-white rounded-2xl p-6 shadow-sm">
+          <div class="text-center space-y-2 mb-6">
+            <p class="font-caramel font-serif text-lg italic text-[#666]">Infomation</p>
+            <h2 class="font-semibold text-[#333]">안내문</h2>
+            <div class="mx-auto w-16 h-px bg-gray-300"></div>
+          </div>
+          <div class="text-center space-y-4">
+            <!-- <div class="space-y-1">
+              <div class="flex items-center justify-center gap-3">
+                <span class="w-8 h-px bg-gray-300"></span>
+                <h3 class="font-bold text-[#333]">안내문</h3>
+                <span class="w-8 h-px bg-gray-300"></span>
+              </div>
+            </div> -->
+          
+            <div class="space-y-2 text-[#333] text-sm leading-relaxed">
+              <p>신랑·신부를 위한 흰색만 살짝 피해주시고,</p>
+              <p>밝고 화려한 의상을 환영합니다</p>
+              <p>축하의 날을 환하게 빛내주세요</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 마음 전하실 곳 / 계좌 -->
+      <section class="scroll-reveal py-8">
+        <div class="text-center space-y-3 mb-6">
+          <p class="font-caramel font-serif text-lg italic text-[#888]">Account</p>
+          <h2 class="font-semibold text-[#333] text-lg">마음 전하실 곳</h2>
+          <p class="text-[#555] text-sm">멀리서도 축하의 마음을
+            전하고 싶으신 분들을 위해
+            계좌번호를 안내드립니다.</p>
+            
+            <p class="text-[#555] text-sm">소중한 축하를 보내주셔서 감사드리며,
+            따뜻한 마음에 깊이 감사드립니다.</p>
+          
+        </div>
+        <div class="flex flex-col gap-3">
+          <div class="rounded-xl bg-[#f0f0f0] overflow-hidden">
+            <button type="button" onclick="toggleAccount('groom')" class="w-full flex items-center justify-between py-4 px-5 text-left text-[#333] font-medium">
+              <span>신랑측 계좌번호</span>
+              <span id="groom-chevron" class="text-[#555] transition-transform duration-200">∨</span>
+            </button>
+            <div id="groom-account" class="hidden px-5 pb-4 pt-3 border-t border-[#e0e0e0] flex flex-col gap-3">
+              <div class="py-3 px-4 rounded-lg bg-white shadow-sm">
+                <p class="font-medium text-[#333] text-sm mb-1">신랑</p>
+                <p class="text-[#555] text-sm">국민은행 244002-04-220972</p>
+                <p class="text-[#555] text-sm">예금주: 이승준</p>
+                <button type="button" onclick="copyAccount('groom'); event.stopPropagation()" class="mt-2 text-sm text-thema-04-point underline">복사하기</button>
+              </div>
+              <div class="py-3 px-4 rounded-lg bg-white shadow-sm">
+                <p class="font-medium text-[#333] text-sm mb-1">신랑아버지</p>
+                <p class="text-[#555] text-sm">국민은행 565001-01-294337</p>
+                <p class="text-[#555] text-sm">예금주: 이재근</p>
+                <button type="button" onclick="copyAccount('groomFather'); event.stopPropagation()" class="mt-2 text-sm text-thema-04-point underline">복사하기</button>
+              </div>
+            </div>
+          </div>
+          <div class="rounded-xl bg-[#f0f0f0] overflow-hidden">
+            <button type="button" onclick="toggleAccount('bride')" class="w-full flex items-center justify-between py-4 px-5 text-left text-[#333] font-medium">
+              <span>신부측 계좌번호</span>
+              <span id="bride-chevron" class="text-[#555] transition-transform duration-200">∨</span>
+            </button>
+            <div id="bride-account" class="hidden px-5 pb-4 pt-3 border-t border-[#e0e0e0] flex flex-col gap-3">
+              <div class="py-3 px-4 rounded-lg bg-white shadow-sm">
+                <p class="font-medium text-[#333] text-sm mb-1">신부</p>
+                <p class="text-[#555] text-sm">신협은행 131-010-783012</p>
+                <p class="text-[#555] text-sm">예금주: 김인혜</p>
+                <button type="button" onclick="copyAccount('bride'); event.stopPropagation()" class="mt-2 text-sm text-thema-04-point underline">복사하기</button>
+              </div>
+              <div class="py-3 px-4 rounded-lg bg-white shadow-sm">
+                <p class="font-medium text-[#333] text-sm mb-1">신부아버지</p>
+                <p class="text-[#555] text-sm">부산은행 062-02-003087-0</p>
+                <p class="text-[#555] text-sm">예금주: 김현중</p>
+                <button type="button" onclick="copyAccount('brideFather'); event.stopPropagation()" class="mt-2 text-sm text-thema-04-point underline">복사하기</button>
+              </div>
+              <div class="py-3 px-4 rounded-lg bg-white shadow-sm">
+                <p class="font-medium text-[#333] text-sm mb-1">신부어머니</p>
+                <p class="text-[#555] text-sm">신협은행 134-003-566495</p>
+                <p class="text-[#555] text-sm">예금주: 김은경</p>
+                <button type="button" onclick="copyAccount('brideMother'); event.stopPropagation()" class="mt-2 text-sm text-thema-04-point underline">복사하기</button>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
     </div>
@@ -161,26 +259,6 @@
     const GALLERY = ['image/100_0055_(2).jpg','image/100_0167_(2).jpg','image/100_0344_(2).jpg','image/100_0594_(2).jpg','image/100_0994_(2).jpg','image/100_1388_(2).jpg','image/100_1461_(2).jpg','image/100_5397_(2).jpg','image/100_5415_(2).jpg','image/100_6249_(2).jpg','image/100_6419_(2).jpg','image/100_6508_(2).jpg','image/100_6748_(2).jpg','image/100_6914_(2).jpg','image/100_7207_(2).jpg','image/100_7382_(2).jpg','image/100_7752_(2).jpg','image/100_7973_(2).jpg','image/100_8470_(2).jpg','image/100_8473_(2).jpg','image/100_8508_(2).jpg','image/100_8514_(2).jpg','image/100_9359_(2).jpg','image/100_9671_(2).jpg','image/200_7362_(2).jpg','image/200_7500_(2).jpg','image/200_8146_(2).jpg','image/200_8151_(2).jpg','image/200_8162_(2).jpg','image/200_8359_(2).jpg','image/200_8363_(2).jpg','image/200_8505_(2).jpg','image/200_8870_(2).jpg','image/200_9753_(2).jpg','image/200_9822_(2).jpg','image/_DSC0382.JPG','image/_DSC0382a.JPG','image/_DSC0533.jpg','image/_DSC0533a.jpg','image/_DSC0591.JPG','image/_DSC0631.JPG','image/_DSC0649.JPG','image/_DSC0732.JPG','image/_DSC0732a.JPG','image/_DSC0770.JPG','image/_DSC0797.JPG'];
     let galleryIdx = 0;
     const WEDDING_DATE = new Date('2026-05-16T16:00:00');
-
-    // 인트로 타이핑 (200ms/글자 → 3초 전에 전체 표시)
-    (function(){
-      const text = '저희 결혼합니다';
-      const el = document.getElementById('intro-typed');
-      const cursor = document.getElementById('intro-cursor');
-      const overlay = document.getElementById('intro-overlay');
-      let i = 0;
-      const iv = setInterval(() => {
-        el.textContent = text.slice(0, i);
-        cursor.style.display = i < text.length ? 'inline-block' : 'none';
-        i++;
-        if (i > text.length) clearInterval(iv);
-      }, 200);
-      setTimeout(() => {
-        overlay.style.opacity = '0';
-        overlay.style.transition = 'opacity 0.4s';
-        setTimeout(() => overlay.style.display = 'none', 400);
-      }, 3000);
-    })();
 
     // 카운트다운
     function pad(n) { return String(n).padStart(2,'0'); }
@@ -256,14 +334,61 @@
       document.getElementById('lightbox-img').alt = '갤러리 사진 ' + (galleryIdx+1);
     }
 
-    // 액션
-    function copyAccount() {
-      const t = '국민은행 123-45-678901\n예금주: 홍길동';
+    // 계좌 토글 및 복사
+    const ACCOUNTS = {
+      groom: '국민은행 244002-04-220972\n예금주: 이승준',
+      groomFather: '국민은행 565001-01-294337\n예금주: 이재근',
+      bride: '신협은행 131-010-783012\n예금주: 김인혜',
+      brideFather: '부산은행 062-02-003087-0\n예금주: 김현중',
+      brideMother: '신협은행 134-003-566495\n예금주: 김은경'
+    };
+    function toggleAccount(type) {
+      const panel = document.getElementById(type + '-account');
+      const chevron = document.getElementById(type + '-chevron');
+      panel.classList.toggle('hidden');
+      chevron.style.transform = panel.classList.contains('hidden') ? '' : 'rotate(180deg)';
+    }
+    function copyAccount(type) {
+      const t = ACCOUNTS[type];
       navigator.clipboard.writeText(t).then(() => alert('계좌번호가 복사되었습니다.')).catch(() => alert('복사에 실패했습니다.'));
     }
     function shareKakao() {
       window.open('https://story.kakao.com/share?url=' + encodeURIComponent(location.href), '_blank');
     }
+
+    // 배경음악
+    const bgm = document.getElementById('bgm');
+    const bgmToggle = document.getElementById('bgm-toggle');
+    let bgmStarted = false;
+    function startBgm() {
+      if (!bgmStarted) {
+        bgm.play().catch(() => {});
+        bgmStarted = true;
+        bgmToggle.textContent = '♫';
+      }
+    }
+    function toggleBgm() {
+      startBgm();
+      if (bgm.paused) {
+        bgm.play().catch(() => {});
+        bgmToggle.textContent = '♫';
+      } else {
+        bgm.pause();
+        bgmToggle.textContent = '♪';
+      }
+    }
+    document.addEventListener('click', startBgm, { once: true });
+    document.addEventListener('touchstart', startBgm, { once: true, passive: true });
+    bgmToggle.addEventListener('click', (e) => { e.stopPropagation(); toggleBgm(); });
+
+    // 스크롤 시 섹션 하나씩 나타남
+    const reveals = document.querySelectorAll('.scroll-reveal');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) entry.target.classList.add('visible');
+      });
+    }, { threshold: 0.15, rootMargin: '-20px 0px' });
+    reveals.forEach(el => observer.observe(el));
   </script>
 </body>
 </html>

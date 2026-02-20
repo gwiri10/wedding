@@ -2,6 +2,8 @@
 
 const KAKAO_MAP_URL =
   "https://map.kakao.com/?q=%EB%B6%80%EC%82%B0%EA%B4%91%EC%97%AD%EC%8B%9C%20%EB%B6%80%EC%82%B0%EC%A7%84%EA%B5%AC%20%EC%A4%91%EC%95%99%EB%8C%80%EB%A1%9C%20640";
+const NAVER_MAP_URL =
+  "https://map.naver.com/v5/search/%EB%B6%80%EC%82%B0%EA%B4%91%EC%97%AD%EC%8B%9C%20%EB%B6%80%EC%82%B0%EC%A7%84%EA%B5%AC%20%EC%A4%91%EC%95%99%EB%8C%80%EB%A1%9C%20640";
 const VENUE_NAME = "라온웨딩홀 23층";
 const PHONE = "051-631-2121";
 const ADDRESS = "부산광역시 부산진구 중앙대로 640";
@@ -39,14 +41,24 @@ export default function LocationMap() {
           />
           </div>
         </div>
-        <a
-          href={KAKAO_MAP_URL}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex items-center justify-center gap-2 w-full py-3 px-4 rounded-xl bg-[#FEE500] text-[#191919] font-sans font-medium text-sm shadow-md hover:shadow-lg transition-shadow"
-        >
-          카카오맵에서 보기
-        </a>
+        <div className="flex gap-3">
+          <a
+            href={KAKAO_MAP_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-[#FEE500] text-[#191919] font-sans font-medium text-sm shadow-md hover:shadow-lg transition-shadow"
+          >
+            카카오맵
+          </a>
+          <a
+            href={NAVER_MAP_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-[#03C75A] text-white font-sans font-medium text-sm shadow-md hover:shadow-lg transition-shadow"
+          >
+            네이버맵
+          </a>
+        </div>
       </div>
     </section>
   );
