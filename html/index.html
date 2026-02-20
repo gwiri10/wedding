@@ -37,6 +37,9 @@
     .guest-card-name { font-weight: 600; color: #333; font-size: 0.875rem; }
     .guest-card-date { color: #999; font-size: 0.75rem; flex-shrink: 0; }
     .guest-card-message { color: #555; font-size: 0.875rem; line-height: 1.6; white-space: pre-wrap; }
+    .rsvp-btn-group { display: flex; gap: 0.5rem; }
+    .rsvp-btn { flex: 1; padding: 0.5rem 0.75rem; border-radius: 0.5rem; border: 1px solid #ddd; background: white; font-size: 0.875rem; cursor: pointer; transition: all 0.2s; }
+    .rsvp-btn.selected { border-color: var(--color-thema-04-point); background: #f9f7fa; color: var(--color-thema-04-point); }
   </style>
 </head>
 <body class="bg-white antialiased">
@@ -259,8 +262,65 @@
           <!-- 방명록 카드가 여기에 표시됩니다 -->
         </div>
       </section>
+
+      <!-- 참석 여부 (맨 아래) -->
+      <section class="scroll-reveal -mx-6 py-8 px-6 bg-[#f5f5f5]">
+        <div class="text-center space-y-4 mb-6">
+          <p class="font-caramel text-[#999] italic">RSVP</p>
+          <h3 class="font-semibold text-[#333] text-lg">참석 여부 전달</h3>
+          <p class="text-[#555] text-sm leading-relaxed">결혼식에 오시는 모든 분들을 더욱 특별히 모시고자 하오니,<br>참석 여부 전달을 부탁드립니다.</p>
+        </div>
+        <button type="button" id="rsvp-open" class="w-full py-4 rounded-xl bg-[#555] text-white font-medium text-sm shadow-md hover:bg-[#444]">참석여부 전달하기</button>
+      </section>
     </div>
   </main>
+
+  <!-- RSVP 폼 팝업 -->
+  <div id="rsvp-form" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50 p-4 overflow-y-auto" onclick="closeRsvpForm(event)">
+    <div class="bg-white rounded-2xl p-6 max-w-[340px] w-full my-8" onclick="event.stopPropagation()">
+      <div class="flex justify-between items-center mb-6">
+        <h3 class="font-semibold text-[#333] text-lg">참석 여부 전달</h3>
+        <button type="button" onclick="closeRsvpForm()" class="w-8 h-8 rounded-full flex items-center justify-center text-[#666] hover:bg-gray-100">✕</button>
+      </div>
+      <form id="rsvpForm" class="space-y-5">
+        <div>
+          <p class="text-[#555] text-sm mb-2">신랑님과 신부님 중 어느 분의 하객이신가요?</p>
+          <div class="rsvp-btn-group">
+            <button type="button" class="rsvp-btn" data-rsvp="side" data-value="신랑측">신랑측</button>
+            <button type="button" class="rsvp-btn" data-rsvp="side" data-value="신부측">신부측</button>
+          </div>
+        </div>
+        <div>
+          <p class="text-[#555] text-sm mb-2">참석여부를 알려주세요.</p>
+          <div class="rsvp-btn-group">
+            <button type="button" class="rsvp-btn" data-rsvp="attend" data-value="참석">참석</button>
+            <button type="button" class="rsvp-btn" data-rsvp="attend" data-value="불참">불참</button>
+          </div>
+        </div>
+        <div>
+          <p class="text-[#555] text-sm mb-2">성함을 알려주세요.</p>
+          <input type="text" id="rsvp-name" placeholder="참석자 본인 성함" required class="w-full py-3 px-4 rounded-xl border border-gray-200 text-sm">
+        </div>
+        <div>
+          <p class="text-[#555] text-sm mb-2">식사여부를 알려주세요.</p>
+          <div class="flex flex-wrap gap-2">
+            <button type="button" class="rsvp-btn" data-rsvp="meal" data-value="식사 예정">식사 예정</button>
+            <button type="button" class="rsvp-btn" data-rsvp="meal" data-value="식사 안 함">식사 안 함</button>
+            <button type="button" class="rsvp-btn" data-rsvp="meal" data-value="미정">미정</button>
+          </div>
+        </div>
+        <div>
+          <p class="text-[#555] text-sm mb-2">동행 인원이 있다면 인원수를 알려주세요.</p>
+          <input type="number" id="rsvp-count" placeholder="본인을 제외한 동행 인원 수" min="0" class="w-full py-3 px-4 rounded-xl border border-gray-200 text-sm" value="">
+        </div>
+        <div>
+          <p class="text-[#555] text-sm mb-2">연락처를 알려주세요.</p>
+          <input type="tel" id="rsvp-phone" placeholder="연락처" class="w-full py-3 px-4 rounded-xl border border-gray-200 text-sm">
+        </div>
+        <button type="submit" id="rsvp-submit" class="w-full py-4 rounded-xl bg-[#888] text-white font-medium text-sm shadow-md" disabled>참석여부 전달하기</button>
+      </form>
+    </div>
+  </div>
 
   <!-- 라이트박스 -->
   <div id="lightbox" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/90" onclick="closeLightbox()">
@@ -446,22 +506,84 @@
       try {
         const name = document.getElementById("name").value;
         const message = document.getElementById("message").value;
-        await fetch(scriptURL, {
+        const res = await fetch(scriptURL, {
           method: "POST",
-          headers: {
-            "Content-Type": "text/plain;charset=utf-8"
-          },
-          body: JSON.stringify({ name, message })
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          body: JSON.stringify({ type: "guestbook", name, message })
         });
+        if (!res.ok) throw new Error("서버 오류");
         document.getElementById("guestForm").reset();
+        btn.disabled = false;
+        btn.textContent = "작성하기";
         loadGuests();
       } catch (err) {
         alert("등록에 실패했습니다.");
+        btn.disabled = false;
+        btn.textContent = "작성하기";
       }
-      btn.disabled = false;
-      btn.textContent = "작성하기";
     });
     loadGuests();
+
+    // 참석 여부 (RSVP)
+    const rsvpData = { side: "", attend: "", meal: "" };
+    document.getElementById("rsvp-open").addEventListener("click", () => {
+      document.getElementById("rsvp-form").classList.remove("hidden");
+      document.getElementById("rsvp-form").classList.add("flex");
+      document.body.style.overflow = "hidden";
+    });
+    function closeRsvpForm(e) {
+      if (e && e.target !== e.currentTarget && e.type === "click") return;
+      document.getElementById("rsvp-form").classList.add("hidden");
+      document.getElementById("rsvp-form").classList.remove("flex");
+      document.body.style.overflow = "";
+    }
+    document.querySelectorAll(".rsvp-btn[data-rsvp]").forEach(btn => {
+      btn.addEventListener("click", function() {
+        const key = this.dataset.rsvp;
+        const val = this.dataset.value;
+        this.parentElement.querySelectorAll(".rsvp-btn").forEach(b => b.classList.remove("selected"));
+        this.classList.add("selected");
+        rsvpData[key] = val;
+        updateRsvpSubmit();
+      });
+    });
+    function updateRsvpSubmit() {
+      const name = document.getElementById("rsvp-name").value.trim();
+      const can = name && rsvpData.attend;
+      document.getElementById("rsvp-submit").disabled = !can;
+      document.getElementById("rsvp-submit").className = can ? "w-full py-4 rounded-xl bg-[#555] text-white font-medium text-sm shadow-md hover:bg-[#444]" : "w-full py-4 rounded-xl bg-[#888] text-white font-medium text-sm shadow-md";
+    }
+    document.getElementById("rsvp-name").addEventListener("input", updateRsvpSubmit);
+    document.getElementById("rsvpForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const btn = document.getElementById("rsvp-submit");
+      btn.disabled = true;
+      btn.textContent = "전송 중...";
+      try {
+        await fetch(scriptURL, {
+          method: "POST",
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          body: JSON.stringify({
+            type: "rsvp",
+            name: document.getElementById("rsvp-name").value.trim(),
+            attend: rsvpData.attend,
+            count: document.getElementById("rsvp-count").value || "0",
+            meal: rsvpData.meal,
+            phone: document.getElementById("rsvp-phone").value.trim() || ""
+          })
+        });
+        alert("참석 여부가 전달되었습니다.");
+        document.getElementById("rsvpForm").reset();
+        document.querySelectorAll(".rsvp-btn.selected").forEach(b => b.classList.remove("selected"));
+        rsvpData.side = rsvpData.attend = rsvpData.meal = "";
+        updateRsvpSubmit();
+        closeRsvpForm();
+      } catch (err) {
+        alert("전송에 실패했습니다.");
+      }
+      btn.disabled = false;
+      btn.textContent = "참석여부 전달하기";
+    });
 
     // 스크롤 시 섹션 하나씩 나타남
     const reveals = document.querySelectorAll('.scroll-reveal');
