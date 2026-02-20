@@ -166,7 +166,7 @@ export default function PhotoGallery() {
       {/* 상단 전체 리스트 (가로 스크롤) - 선택 주변만 실제 이미지 로드 */}
       <div
         ref={stripRef}
-        className="flex gap-2 mb-4 px-4 overflow-x-auto scroll-smooth"
+        className="flex gap-2 mb-4 px-4 overflow-x-auto overflow-y-hidden scroll-smooth min-w-0"
         style={{ scrollbarWidth: "thin", WebkitOverflowScrolling: "touch" }}
       >
         {GALLERY_IMAGES.map((_, idx) => (
