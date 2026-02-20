@@ -120,7 +120,54 @@ export default function PhotoGallery() {
   }, []);
 
   const stripRef = useRef<HTMLDivElement>(null);
+  const stripWrapRef = useRef<HTMLDivElement>(null);
+  const scrollbarFillRef = useRef<HTMLDivElement>(null);
+  const sectionRef = useRef<HTMLElement>(null);
   const thumbRefs = useRef<(HTMLButtonElement | null)[]>([]);
+
+  // 커스텀 스크롤바 위치 업데이트
+  const updateScrollbar = useCallback(() => {
+    const wrap = stripWrapRef.current;
+    const fill = scrollbarFillRef.current;
+    if (!wrap || !fill) return;
+    const maxScroll = wrap.scrollWidth - wrap.clientWidth;
+    if (maxScroll <= 0) {
+      fill.style.width = "100%";
+      fill.style.marginLeft = "0";
+      return;
+    }
+    const ratio = wrap.clientWidth / wrap.scrollWidth;
+    const thumbWidth = Math.max(20, ratio * 100);
+    fill.style.width = `${thumbWidth}%`;
+    const move = (wrap.scrollLeft / maxScroll) * (100 - thumbWidth);
+    fill.style.marginLeft = `${move}%`;
+  }, []);
+
+  useEffect(() => {
+    const wrap = stripWrapRef.current;
+    if (!wrap) return;
+    wrap.addEventListener("scroll", updateScrollbar);
+    const timer = setTimeout(updateScrollbar, 300);
+    return () => {
+      wrap.removeEventListener("scroll", updateScrollbar);
+      clearTimeout(timer);
+    };
+  }, [updateScrollbar, GALLERY_IMAGES.length]);
+
+  // 갤러리 섹션이 화면에 보이면 썸네일 스크롤 영역 활성화 (포커스)
+  useEffect(() => {
+    const section = sectionRef.current;
+    const wrap = stripWrapRef.current;
+    if (!section || !wrap) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) wrap.focus();
+      },
+      { threshold: 0.15, rootMargin: "-20px 0px" }
+    );
+    observer.observe(section);
+    return () => observer.disconnect();
+  }, []);
 
   // 선택된 썸네일이 보이도록 스크롤
   useEffect(() => {
@@ -128,7 +175,8 @@ export default function PhotoGallery() {
     if (el && stripRef.current) {
       el.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
     }
-  }, [currentIndex]);
+    setTimeout(updateScrollbar, 350);
+  }, [currentIndex, updateScrollbar]);
 
   useEffect(() => {
     if (lightboxOpen) {
@@ -155,7 +203,7 @@ export default function PhotoGallery() {
   if (GALLERY_IMAGES.length === 0) return null;
 
   return (
-    <section className="py-8 group">
+    <section ref={sectionRef} className="py-8 group">
       <div className="flex items-center justify-center">
         <div className="font-caramel text-xl leading-4 font-normal text-thema-04-point mb-2 italic">Gallery</div>
       </div>
@@ -163,16 +211,23 @@ export default function PhotoGallery() {
         사진 갤러리
       </h2>
 
+      <p className="text-xs text-gray-500 text-center mb-2">
+        ← 좌우로 스와이프 →
+      </p>
       {/* 상단 전체 리스트 (가로 스크롤) - 선택 주변만 실제 이미지 로드 */}
       <div
-        className="mb-4 -mx-4 overflow-x-auto overflow-y-hidden scroll-smooth"
+        ref={stripWrapRef}
+        tabIndex={0}
+        role="region"
+        aria-label="썸네일 목록"
+        className="thumb-scroll mb-4 -mx-4 py-3 px-2 bg-gray-50 border-y border-gray-200 overflow-x-scroll overflow-y-hidden scroll-smooth outline-none"
         style={{
-          scrollbarWidth: "thin",
           WebkitOverflowScrolling: "touch",
           touchAction: "pan-x",
+          overscrollBehaviorX: "contain",
         }}
       >
-        <div ref={stripRef} className="flex gap-2 px-4 w-max min-w-full">
+        <div ref={stripRef} className="flex gap-2 px-2 w-max min-w-full">
         {GALLERY_IMAGES.map((_, idx) => (
           <button
             key={idx}
@@ -192,10 +247,11 @@ export default function PhotoGallery() {
                 src={GALLERY_IMAGES[idx]}
                 alt={`미리보기 ${idx + 1}`}
                 fill
-                className="object-cover"
+                className="object-cover select-none pointer-events-none"
                 sizes="56px"
                 loading="lazy"
                 quality={50}
+                draggable={false}
               />
             ) : (
               <span className="text-xs text-gray-400 font-gowun">{idx + 1}</span>
@@ -203,6 +259,9 @@ export default function PhotoGallery() {
           </button>
         ))}
         </div>
+      </div>
+      <div className="mx-4 mb-4 h-1.5 bg-gray-200 rounded-full overflow-hidden thumb-scrollbar-track">
+        <div ref={scrollbarFillRef} className="thumb-scrollbar-fill h-full w-[20%]" style={{ marginLeft: 0 }} />
       </div>
 
       <div

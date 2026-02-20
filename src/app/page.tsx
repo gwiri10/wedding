@@ -20,7 +20,7 @@ export default function Home() {
   return (
     <>
       <IntroOverlay />
-      <main className="w-full max-w-[360px] mx-auto min-h-screen overflow-x-hidden bg-white">
+      <main className="w-full max-w-[360px] mx-auto min-h-screen bg-white">
       <HeroSection />
 
       <div className="px-6 pb-20 space-y-20">

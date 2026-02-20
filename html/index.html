@@ -41,6 +41,13 @@
     .rsvp-btn-group { display: flex; gap: 0.5rem; }
     .rsvp-btn { flex: 1; padding: 0.5rem 0.75rem; border-radius: 0.5rem; border: 1px solid #ddd; background: white; font-size: 0.875rem; cursor: pointer; transition: all 0.2s; }
     .rsvp-btn.selected { border-color: var(--color-thema-04-point); background: #f9f7fa; color: var(--color-thema-04-point); }
+    .gallery img { user-select: none; -webkit-user-drag: none; pointer-events: auto; }
+    .gallery { overflow-y: auto; touch-action: pan-y; }
+    #thumb-strip-wrap::-webkit-scrollbar { height: 8px; }
+    #thumb-strip-wrap::-webkit-scrollbar-track { background: #e5e5e5; border-radius: 4px; }
+    #thumb-strip-wrap::-webkit-scrollbar-thumb { background: #999; border-radius: 4px; }
+    #thumb-strip-wrap::-webkit-scrollbar-thumb:hover { background: #666; }
+    #thumb-strip-wrap { scrollbar-width: auto; scrollbar-color: #999 #e5e5e5; }
   </style>
   <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=a723a0c5c55b7d9ae11fed410a7d5774"></script>
 </head>
@@ -49,7 +56,7 @@
     <source src="sound/행진곡_도경수) 'Popcorn' 편집본 .mp3" type="audio/mpeg">
   </audio>
   <button type="button" id="bgm-toggle" class="fixed bottom-20 right-6 z-40 w-10 h-10 rounded-full bg-white/90 shadow-lg flex items-center justify-center text-[#555] text-lg" title="배경음악 재생/일시정지">♫</button>
-  <main class="w-full max-w-[360px] mx-auto min-h-screen overflow-x-hidden bg-white rounded-t-[28px] rounded-b-[28px] shadow-sm mb-16">
+  <main class="w-full max-w-[360px] mx-auto min-h-screen bg-white rounded-t-[28px] rounded-b-[28px] shadow-sm mb-16">
     <!-- 히어로 -->
     <section class="relative w-full h-[100dvh] min-h-[600px] max-h-[800px] overflow-hidden">
       <img src="image/200_8363_(2).jpg" alt="결혼식 메인" class="absolute inset-0 w-full h-full object-cover object-center" loading="eager" fetchpriority="high">
@@ -115,11 +122,15 @@
       </section>
 
       <!-- 사진 갤러리 -->
-      <section class="scroll-reveal py-6 group">
+      <section id="gallery-section" class="scroll-reveal py-6 group">
         <div class="flex justify-center"><div class="font-caramel text-xl leading-4 font-normal text-thema-04-point mb-2 italic">Gallery</div></div>
         <h2 class="font-serif text-xl text-[#333] text-center mb-8">사진 갤러리</h2>
-        <div id="thumb-strip-wrap" class="mb-4 -mx-4 overflow-x-auto overflow-y-hidden scroll-smooth" style="-webkit-overflow-scrolling: touch; touch-action: pan-x;">
-          <div id="thumb-strip" class="flex gap-2 px-4 w-max min-w-full"></div>
+        <p class="text-xs text-[#999] text-center mb-2">← 좌우로 스와이프 →</p>
+        <div id="thumb-strip-wrap" tabindex="0" class="mb-2 -mx-4 py-3 px-2 bg-gray-50 border-y border-gray-200 overflow-x-scroll overflow-y-hidden scroll-smooth outline-none rounded-none thumb-scroll" style="-webkit-overflow-scrolling: touch; touch-action: pan-x; overscroll-behavior-x: contain;" role="region" aria-label="썸네일 목록">
+          <div id="thumb-strip" class="flex gap-2 px-2 w-max min-w-full"></div>
+        </div>
+        <div class="mx-4 mb-4 h-1.5 bg-gray-200 rounded-full overflow-hidden" style="display: none;">
+          <div id="thumb-scrollbar-fill" class="h-full bg-[#8b7d8b] rounded-full transition-[width] duration-100" style="width: 20%;"></div>
         </div>
         <div class="relative w-full flex justify-center bg-gray-100 cursor-pointer" id="gallery-main" onclick="openLightbox()">
           <div class="relative w-full aspect-[3/4] overflow-hidden">
@@ -383,7 +394,7 @@ g              <div id="kakao-map" class="absolute inset-0 w-full h-full" style=
       btn.onclick = (e) => { e.stopPropagation(); goToIndex(i); };
       const t = thumbSrc(src);
       const fp = i < 8 ? ' fetchpriority="high"' : ' fetchpriority="low"';
-      btn.innerHTML = '<img src="' + t + '" alt="' + (i+1) + '" class="w-full h-full object-cover" loading="lazy" decoding="async"' + fp + '>';
+      btn.innerHTML = '<img src="' + t + '" alt="' + (i+1) + '" class="w-full h-full object-cover" loading="lazy" decoding="async" draggable="false"' + fp + '>';
       strip.appendChild(btn);
     });
 
@@ -407,7 +418,27 @@ g              <div id="kakao-map" class="absolute inset-0 w-full h-full" style=
         b.className = 'flex-shrink-0 w-14 h-[56px] rounded overflow-hidden border-2 ' + (i===galleryIdx ? 'border-[var(--color-thema-04-point)] ring-2' : 'border-transparent opacity-70');
       });
       strip.children[galleryIdx]?.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+      updateThumbScrollbar();
     }
+    function updateThumbScrollbar() {
+      var wrap = document.getElementById('thumb-strip-wrap');
+      var fill = document.getElementById('thumb-scrollbar-fill');
+      if (!wrap || !fill) return;
+      var maxScroll = wrap.scrollWidth - wrap.clientWidth;
+      if (maxScroll <= 0) { fill.style.width = '100%'; fill.style.marginLeft = '0'; return; }
+      var ratio = wrap.clientWidth / wrap.scrollWidth;
+      var thumbWidth = Math.max(20, ratio * 100);
+      fill.style.width = thumbWidth + '%';
+      var move = (wrap.scrollLeft / maxScroll) * (100 - thumbWidth);
+      fill.style.marginLeft = move + '%';
+    }
+    (function initThumbScrollbar() {
+      var wrap = document.getElementById('thumb-strip-wrap');
+      if (wrap) {
+        wrap.addEventListener('scroll', updateThumbScrollbar);
+        setTimeout(updateThumbScrollbar, 300);
+      }
+    })();
     function openLightbox() {
       document.getElementById('lightbox').classList.remove('hidden');
       document.getElementById('lightbox').classList.add('flex');
@@ -619,11 +650,15 @@ g              <div id="kakao-map" class="absolute inset-0 w-full h-full" style=
       marker.setMap(map);
     })();
 
-    // 스크롤 시 섹션 하나씩 나타남
+    // 스크롤 시 섹션 하나씩 나타남 + 갤러리 썸네일 스크롤 영역 활성화
     const reveals = document.querySelectorAll('.scroll-reveal');
+    const stripWrap = document.getElementById('thumb-strip-wrap');
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
-        if (entry.isIntersecting) entry.target.classList.add('visible');
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          if (entry.target.id === 'gallery-section' && stripWrap) stripWrap.focus();
+        }
       });
     }, { threshold: 0.15, rootMargin: '-20px 0px' });
     reveals.forEach(el => observer.observe(el));
