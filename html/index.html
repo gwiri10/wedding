@@ -415,15 +415,30 @@
       galleryIdx = i;
       updateGallery();
     }
+    function preloadFull(indices) {
+      indices.forEach(function(i) {
+        if (i < 0 || i >= GALLERY.length) return;
+        var img = new Image();
+        img.src = GALLERY[i];
+      });
+    }
     function updateGallery() {
-      document.getElementById('main-img').src = GALLERY[galleryIdx];
-      document.getElementById('main-img').alt = '갤러리 사진 ' + (galleryIdx+1);
+      var mainImg = document.getElementById('main-img');
+      var fullUrl = GALLERY[galleryIdx];
+      var thumbUrl = thumbSrc(fullUrl);
+      mainImg.alt = '갤러리 사진 ' + (galleryIdx+1);
       document.getElementById('gallery-num').textContent = galleryIdx + 1;
       strip.querySelectorAll('button').forEach((b, i) => {
         b.className = 'flex-shrink-0 w-14 h-[56px] rounded overflow-hidden border-2 ' + (i===galleryIdx ? 'border-[var(--color-thema-04-point)] ring-2' : 'border-transparent opacity-70');
       });
       strip.children[galleryIdx]?.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
       updateThumbScrollbar();
+      mainImg.src = thumbUrl;
+      mainImg.dataset.want = fullUrl;
+      var hi = new Image();
+      hi.onload = function() { if (mainImg.dataset.want === fullUrl) mainImg.src = fullUrl; };
+      hi.src = fullUrl;
+      preloadFull([galleryIdx - 1, galleryIdx + 1, galleryIdx + 2]);
     }
     function updateThumbScrollbar() {
       var wrap = document.getElementById('thumb-strip-wrap');
