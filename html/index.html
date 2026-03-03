@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>모바일 청첩장</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preload" href="image/200_8363_(2).jpg" as="image">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital@0;1&display=swap" rel="stylesheet">
   <style>
@@ -52,7 +53,7 @@
   <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=a723a0c5c55b7d9ae11fed410a7d5774"></script>
 </head>
 <body class="bg-[#eee] antialiased">
-  <audio id="bgm" loop preload="auto">
+  <audio id="bgm" loop preload="metadata">
     <source src="sound/행진곡_도경수) 'Popcorn' 편집본 .mp3" type="audio/mpeg">
   </audio>
   <button type="button" id="bgm-toggle" class="fixed bottom-20 right-6 z-40 w-10 h-10 rounded-full bg-white/90 shadow-lg flex items-center justify-center text-[#555] text-lg" title="배경음악 재생/일시정지">♫</button>
@@ -182,7 +183,7 @@
 
       <!-- 동영상 배경 + 안내문 -->
       <section class="scroll-reveal relative overflow-hidden -mx-6 -my-6 aspect-[9/16] min-h-[500px]" style="margin-top: 0;">
-        <video autoplay muted loop playsinline class="absolute inset-0 w-full h-full object-cover">
+        <video autoplay muted loop playsinline loading="lazy" class="absolute inset-0 w-full h-full object-cover">
           <source src="image/0220.mp4" type="video/mp4">
         </video>
         <div class="absolute inset-0 bg-black/25"></div>
@@ -357,6 +358,10 @@
 
   <script src="gallery-order.js"></script>
   <script>
+    // 새로고침 시 항상 맨 위에서 시작
+    history.scrollRestoration = 'manual';
+    window.scrollTo(0, 0);
+
     let galleryIdx = 0;
     const WEDDING_DATE = new Date('2026-05-16T16:00:00');
 
@@ -386,22 +391,31 @@
     setInterval(updateCountdown, 1000);
     updateCountdown();
 
-    // 갤러리 - 위쪽 썸네일은 image/thumb/ 에서만 로드
+    // 갤러리 - 스크롤해서 가까워질 때만 초기화 (첫 화면 로딩 속도 향상)
     const strip = document.getElementById('thumb-strip');
+    const gallerySection = document.getElementById('gallery-section');
+    let galleryInitialized = false;
     function thumbSrc(src) { return src.replace(/^image\//, 'image/thumb/').replace(/\.[^.]+$/i, '.webp'); }
-    GALLERY.forEach((src, i) => {
-      const btn = document.createElement('button');
-      btn.type = 'button';
-      btn.className = 'flex-shrink-0 w-14 h-[56px] rounded overflow-hidden border-2 ' + (i===0 ? 'border-[var(--color-thema-04-point)] ring-2 ring-[var(--color-thema-04-point)]/30' : 'border-transparent opacity-70');
-      btn.style.touchAction = 'pan-x';
-      btn.onclick = (e) => { e.stopPropagation(); goToIndex(i); };
-      const t = thumbSrc(src);
-      const fp = i < 8 ? ' fetchpriority="high"' : ' fetchpriority="low"';
-      btn.innerHTML = '<img src="' + t + '" alt="' + (i+1) + '" class="w-full h-full object-cover" loading="lazy" decoding="async" draggable="false"' + fp + '>';
-      strip.appendChild(btn);
-    });
-    galleryIdx = 0;
-    updateGallery();
+    function initGallery() {
+      if (galleryInitialized || typeof GALLERY === 'undefined') return;
+      galleryInitialized = true;
+      GALLERY.forEach((src, i) => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'flex-shrink-0 w-14 h-[56px] rounded overflow-hidden border-2 ' + (i===0 ? 'border-[var(--color-thema-04-point)] ring-2 ring-[var(--color-thema-04-point)]/30' : 'border-transparent opacity-70');
+        btn.style.touchAction = 'pan-x';
+        btn.onclick = (e) => { e.stopPropagation(); goToIndex(i); };
+        const t = thumbSrc(src);
+        btn.innerHTML = '<img src="' + t + '" alt="' + (i+1) + '" class="w-full h-full object-cover" loading="lazy" decoding="async" draggable="false">';
+        strip.appendChild(btn);
+      });
+      galleryIdx = 0;
+      updateGallery();
+    }
+    var galleryObserver = new IntersectionObserver(function(entries) {
+      if (entries[0].isIntersecting) initGallery();
+    }, { rootMargin: '200px' });
+    if (gallerySection) galleryObserver.observe(gallerySection);
 
     function goPrev() {
       galleryIdx = galleryIdx <= 0 ? GALLERY.length - 1 : galleryIdx - 1;
@@ -431,7 +445,15 @@
       strip.querySelectorAll('button').forEach((b, i) => {
         b.className = 'flex-shrink-0 w-14 h-[56px] rounded overflow-hidden border-2 ' + (i===galleryIdx ? 'border-[var(--color-thema-04-point)] ring-2' : 'border-transparent opacity-70');
       });
-      strip.children[galleryIdx]?.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+      // 썸네일 스트립만 가로 스크롤 (페이지 스크롤에 영향 안 주도록)
+      var wrap = document.getElementById('thumb-strip-wrap');
+      var thumb = strip.children[galleryIdx];
+      if (wrap && thumb) {
+        var thumbLeft = thumb.offsetLeft;
+        var thumbWidth = thumb.offsetWidth;
+        var scrollTarget = thumbLeft - (wrap.clientWidth / 2) + (thumbWidth / 2);
+        wrap.scrollTo({ left: Math.max(0, scrollTarget), behavior: 'smooth' });
+      }
       updateThumbScrollbar();
       mainImg.src = thumbUrl;
       mainImg.dataset.want = fullUrl;
@@ -656,19 +678,22 @@
       btn.textContent = "참석여부 전달하기";
     });
 
-    // 카카오 지도 초기화
-    (function initKakaoMap() {
-      var container = document.getElementById('kakao-map');
-      if (!container || typeof kakao === 'undefined') return;
-      var options = {
-        center: new kakao.maps.LatLng(35.1497327738588, 129.059753113622),
-        level: 2
-      };
-      var map = new kakao.maps.Map(container, options);
-      var markerPosition = new kakao.maps.LatLng(35.1497327738588, 129.059753113622);
-      var marker = new kakao.maps.Marker({ position: markerPosition });
-      marker.setMap(map);
-    })();
+    // 카카오 지도 - 지도 섹션 보일 때만 초기화 (첫 로딩 속도 향상)
+    var mapEl = document.getElementById('kakao-map');
+    var mapSection = mapEl ? mapEl.closest('section') : null;
+    if (mapSection) {
+      var mapObserver = new IntersectionObserver(function(entries) {
+        if (!entries[0].isIntersecting) return;
+        mapObserver.disconnect();
+        var container = document.getElementById('kakao-map');
+        if (!container || typeof kakao === 'undefined') return;
+        var options = { center: new kakao.maps.LatLng(35.1497327738588, 129.059753113622), level: 2 };
+        var map = new kakao.maps.Map(container, options);
+        var marker = new kakao.maps.Marker({ position: new kakao.maps.LatLng(35.1497327738588, 129.059753113622) });
+        marker.setMap(map);
+      }, { rootMargin: '150px' });
+      mapObserver.observe(mapSection);
+    }
 
     // 스크롤 시 섹션 하나씩 나타남 + 갤러리 썸네일 스크롤 영역 활성화
     const reveals = document.querySelectorAll('.scroll-reveal');
