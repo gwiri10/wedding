@@ -40,7 +40,7 @@ const GALLERY = [
   'image/KakaoTalk_20250809_000027630_01.jpg',
   'image/KakaoTalk_20250809_000027630_02.jpg',
   'image/KakaoTalk_20250809_000027630_08.jpg',
-  'image/KakaoTalk_20250809_030622949_01.JPG',
+  'image/KakaoTalk_20250809_030622949_01.jpg',
   'image/KakaoTalk_20250809_000027630_03.jpg',
   'image/KakaoTalk_20250809_000027630_05.jpg',
   'image/_DSC0382a.JPG',
