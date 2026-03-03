@@ -8,6 +8,7 @@
   <title>이승준❤️김인혜 결혼합니다</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preload" href="image/200_8363_(2).jpg" as="image">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital@0;1&display=swap" rel="stylesheet">
   <style>
@@ -52,13 +53,16 @@
     #thumb-strip-wrap::-webkit-scrollbar-thumb:hover { background: #666; }
     #thumb-strip-wrap { scrollbar-width: auto; scrollbar-color: #999 #e5e5e5; }
   </style>
-  <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=a723a0c5c55b7d9ae11fed410a7d5774"></script>
+  <!-- <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=a723a0c5c55b7d9ae11fed410a7d5774"></script> -->
 </head>
 <body class="bg-[#eee] antialiased">
   <audio id="bgm" loop preload="metadata">
     <source src="sound/행진곡_도경수) 'Popcorn' 편집본 .mp3" type="audio/mpeg">
   </audio>
-  <button type="button" id="bgm-toggle" class="fixed bottom-20 right-6 z-40 w-10 h-10 rounded-full bg-white/90 shadow-lg flex items-center justify-center text-[#555] text-lg" title="배경음악 재생/일시정지">♫</button>
+  <div class="fixed bottom-20 right-6 z-40 flex flex-col items-center gap-2">
+    <button type="button" id="to-top-btn" class="w-10 h-10 rounded-full bg-white/90 shadow-lg flex items-center justify-center text-[#555] hover:bg-white/95 transition-colors" title="맨 위로"><i class="fa-solid fa-chevron-up text-sm"></i></button>
+    <button type="button" id="bgm-toggle" class="w-10 h-10 rounded-full bg-white/90 shadow-lg flex items-center justify-center text-[#555] text-lg hover:bg-white/95 transition-colors" title="배경음악 재생/일시정지">♫</button>
+  </div>
   <main class="w-full max-w-[360px] mx-auto min-h-screen bg-white rounded-t-[28px] rounded-b-[28px] shadow-sm mb-16">
     <!-- 히어로 -->
     <section class="relative w-full h-[100dvh] min-h-[600px] max-h-[800px] overflow-hidden">
@@ -296,7 +300,8 @@
         </div>
         <button type="button" id="rsvp-open" class="w-full py-4 rounded-xl bg-[#555] text-white font-medium text-sm shadow-md hover:bg-[#444]">참석여부 전달하기</button>
       </section>
-
+      <section class="scroll-reveal -mx-6 py-6 overflow-hidden">
+        <img src="image/100_9671_(2).jpg" alt="청첩장 사진" class="block w-full aspect-[3/4] object-cover" decoding="async">
       <p class="text-center text-[#999] text-[10px] py-6">Copyright 2026. gwiri All rights reserved.</p>
     </div>
   </main>
@@ -347,7 +352,6 @@
       </form>
     </div>
   </div>
-
   <!-- 라이트박스 -->
   <div id="lightbox" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/90" onclick="closeLightbox()">
     <button type="button" onclick="event.stopPropagation();closeLightbox()" class="absolute top-4 right-4 w-10 h-10 rounded-full bg-white/20 flex items-center justify-center text-white z-20">✕</button>
@@ -546,6 +550,11 @@
     document.addEventListener('touchstart', startBgm, { once: true, passive: true });
     bgmToggle.addEventListener('click', (e) => { e.stopPropagation(); toggleBgm(); });
 
+    // 맨 위로 버튼
+    document.getElementById('to-top-btn').addEventListener('click', function() {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+
     // 방명록 (Google Apps Script)
     const scriptURL = "https://script.google.com/macros/s/AKfycbydTb5Mr-H_3cDyrLkn8QFGz75mSQdklN-2My8LUi8EN7p4oR-CNCGJCWWl-t8YF_TS/exec";
     async function loadGuests() {
@@ -699,12 +708,10 @@
 
     // 스크롤 시 섹션 하나씩 나타남 + 갤러리 썸네일 스크롤 영역 활성화
     const reveals = document.querySelectorAll('.scroll-reveal');
-    const stripWrap = document.getElementById('thumb-strip-wrap');
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
           entry.target.classList.add('visible');
-          if (entry.target.id === 'gallery-section' && stripWrap) stripWrap.focus();
         }
       });
     }, { threshold: 0.15, rootMargin: '-20px 0px' });
